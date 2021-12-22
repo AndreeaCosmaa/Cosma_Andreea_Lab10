@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Cosma_Andreea_Lab10.Models;
-
 namespace Cosma_Andreea_Lab10
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ListPage : ContentPage
     {
-        
         public ListPage()
         {
             InitializeComponent();
@@ -30,6 +28,21 @@ namespace Cosma_Andreea_Lab10
             var slist = (ShopList)BindingContext;
             await App.Database.DeleteShopListAsync(slist);
             await Navigation.PopAsync();
+        }
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            var shopl = (ShopList)BindingContext;
+            listView.ItemsSource = await App.Database.GetListProductsAsync(shopl.ID);
+        }
+
+       //navigheaza la pagina ProductPage
+        async void OnChooseButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ProductPage((ShopList)this.BindingContext)
+            {
+                BindingContext = new Product()
+            });
         }
     }
 }
